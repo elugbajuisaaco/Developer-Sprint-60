@@ -1,0 +1,6 @@
+{
+  "name": "DevSprint 60",
+  "description": "Interactive, gamified 8-week full-stack and machine learning mentorship platform engineered for technical internship assessments.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
