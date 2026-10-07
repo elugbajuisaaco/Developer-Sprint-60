@@ -103,14 +103,21 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
         {/* Modal Top Bar */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-4">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-cyan-400">
               <span>Week {weekNumber} Gate Assessment</span>
               <span aria-hidden="true">·</span>
-              <span>Passing Bar: 70% to Unlock Week {weekNumber + 1}</span>
+              <span>Passing Bar: {weekData.assessmentGateway?.passingScorePercent ?? 70}% to Unlock Week {weekNumber + 1}</span>
+              <span aria-hidden="true">·</span>
+              <span className="text-purple-300 font-mono">{weekData.syllabusItemRange}</span>
             </div>
             <h3 id="quiz-modal-title" className="text-xl font-bold text-white mt-0.5">
-              Technical Screening Gate Test
+              {weekData.assessmentGateway?.title || 'Technical Screening Gate Test'}
             </h3>
+            {weekData.assessmentGateway?.screeningObjective && (
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                {weekData.assessmentGateway.screeningObjective}
+              </p>
+            )}
           </div>
 
           <button
@@ -135,12 +142,18 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
 
             <div>
               <h4 className="text-2xl font-bold text-white">
-                {finalPercentage >= 70 ? `Gate Cleared! Week ${weekNumber + 1} Unlocked` : 'Under 70% Passing Threshold'}
+                {finalPercentage >= 70
+                  ? weekNumber < 8
+                    ? `Gate Cleared! Week ${weekNumber + 1} Unlocked`
+                    : 'Full 2-Month Capstone Cleared! Assessment Ready!'
+                  : 'Under 70% Passing Threshold'}
               </h4>
               <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto leading-relaxed">
                 {finalPercentage >= 70
-                  ? `Congratulations! You scored ${finalPercentage}%, clearing the internship screening gate required to advance.`
-                  : `You scored ${finalPercentage}%. You need at least 70% to unlock Week ${weekNumber + 1}. Review the explanations and retake to advance.`}
+                  ? weekNumber < 8
+                    ? `Congratulations! You scored ${finalPercentage}%, clearing the internship screening gate required to advance.`
+                    : `Incredible achievement! You scored ${finalPercentage}%, conquering the Full-Stack & Machine Learning Capstone Gateway and proving internship readiness!`
+                  : `You scored ${finalPercentage}%. You need at least 70% to clear this screening gateway. Review the explanations and retake to advance.`}
               </p>
             </div>
 

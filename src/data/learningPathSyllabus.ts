@@ -419,3 +419,20 @@ export const LEARNING_PATH_SYLLABUS: SyllabusPart[] = [
     ],
   },
 ];
+
+/**
+ * Returns all logically sequenced canonical syllabus items mapped to a given week number (1 to 8).
+ */
+export function getSyllabusItemsForWeek(weekNum: number) {
+  const items: (typeof LEARNING_PATH_SYLLABUS)[0]['modules'][0]['items'] = [];
+  LEARNING_PATH_SYLLABUS.forEach((part) => {
+    part.modules.forEach((mod) => {
+      mod.items.forEach((item) => {
+        if (item.weekNumber === weekNum) {
+          items.push(item);
+        }
+      });
+    });
+  });
+  return items;
+}

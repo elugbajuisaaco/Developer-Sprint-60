@@ -399,10 +399,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 {/* Week Header */}
                 <div className="flex items-start justify-between">
                   <div>
-                    <div className="flex items-center gap-2 text-xs text-slate-400">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
                       <span className="font-bold text-cyan-400">Month {monthNum} · Week {week.weekNumber}</span>
                       <span aria-hidden="true">·</span>
                       <span>{week.pillarTitle}</span>
+                      <span aria-hidden="true">·</span>
+                      <span className="text-purple-300 font-mono text-[11px] bg-purple-950/40 px-1.5 py-0.2 rounded border border-purple-500/20">
+                        {week.syllabusItemRange}
+                      </span>
                     </div>
                     <h3 className="text-base font-bold text-white mt-1 group-hover:text-cyan-300 transition-colors flex items-center gap-2">
                       <span>{week.title}</span>
@@ -473,7 +477,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     </span>
                     <span aria-hidden="true">·</span>
                     <span className="text-cyan-400">
-                      {week.quiz.length} MCQs Test
+                      {week.quiz.length} MCQs Gateway (≥ {week.assessmentGateway?.passingScorePercent ?? 70}%)
                     </span>
                   </div>
 

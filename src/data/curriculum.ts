@@ -1,4 +1,5 @@
 import { WeekCurriculum } from '../types';
+import { getSyllabusItemsForWeek } from './learningPathSyllabus';
 
 export const CURRICULUM_DATA: WeekCurriculum[] = [
   // =========================================================================
@@ -11,6 +12,9 @@ export const CURRICULUM_DATA: WeekCurriculum[] = [
     partTitle: 'Part 1: Python & Foundations',
     moduleNumbers: [1],
     moduleTitles: ['Foundations of Programming & Computational Thinking'],
+    syllabusItemCount: 38,
+    syllabusItemRange: 'Items 1–38 (Lessons 1.1.1 to 8.1.4)',
+    syllabusItems: getSyllabusItemsForWeek(1),
     pillarId: 'python-backend',
     pillarTitle: 'Python Foundations',
     title: 'Computational Thinking, CPython Internals & Memory Architecture',
@@ -23,6 +27,15 @@ export const CURRICULUM_DATA: WeekCurriculum[] = [
       'Variables as Memory References (Lesson 6.1.1)',
       'Type Casting & Truncation Safety (Lesson 8.1.2)',
     ],
+    assessmentGateway: {
+      id: 'gate-w1',
+      title: 'Week 1 Screening Gateway: Computational Architecture & Memory',
+      subtitle: 'Mandatory technical assessment gate for CPython bytecode, pointers, POSIX streams, and type conversion.',
+      passingScorePercent: 70,
+      screeningObjective: 'Filter candidates lacking foundational systems and runtime memory architecture comprehension.',
+      mandatoryToUnlockNextWeek: true,
+      questionCount: 4,
+    },
     lessons: [
       {
         id: 'w1-l1',
@@ -84,6 +97,63 @@ print(list_a) # [1, 2, 3, 4] — mutated through list_c reference!`,
           'Mutating a shared mutable object (list, dict, set) affects all referencing aliases.',
         ],
         outputSimulation: 'Equality (==): True | Identity (is): False | list_a after reference append: [1, 2, 3, 4]',
+      },
+      {
+        id: 'w1-l3',
+        weekNumber: 1,
+        title: 'UNIX Standard Streams & Pipeline Redirection (stdin, stdout, stderr)',
+        summary: 'How command-line programs communicate via standard file descriptors 0, 1, and 2, and chaining processes with pipes (|).',
+        readTimeMinutes: 5,
+        internshipTip: 'Internship screeners test whether backend/ML candidates know how headless jobs log errors: stdout (1) carries data payload, stderr (2) logs diagnostics, and 2>&1 merges them.',
+        language: 'python',
+        codeSnippet: `import sys
+
+# Writing to stdout (file descriptor 1)
+sys.stdout.write("Status: Pipeline initialized successfully\\n")
+
+# Writing to stderr (file descriptor 2) - does not contaminate data stream!
+sys.stderr.write("[LOG] Diagnostic warning: Memory buffer reached 80%\\n")
+
+# In Unix/Bash CLI:
+# python worker.py > output.txt 2> error.log
+# python worker.py 2>&1 | grep "Diagnostic"`,
+        explanationPoints: [
+          'Standard file descriptors: 0 = stdin (keyboard/pipe input), 1 = stdout (standard output), 2 = stderr (errors).',
+          'Piping (|) connects stdout of one process directly to stdin of the subsequent process.',
+          'Headless machine learning training scripts separate metrics outputs from error stack traces.',
+        ],
+        outputSimulation: 'Status: Pipeline initialized successfully\n[LOG] Diagnostic warning: Memory buffer reached 80%',
+      },
+      {
+        id: 'w1-l4',
+        weekNumber: 1,
+        title: 'Type Casting Engine: Implicit vs Explicit & Float Truncation',
+        summary: 'How CPython converts data types, why casting floats truncates towards zero, and handling ValueError exceptions safely.',
+        readTimeMinutes: 4,
+        internshipTip: 'Crucial screening trap: int(9.99) does not round to 10! It truncates decimal digits towards zero, yielding 9. For mathematical rounding, use round().',
+        language: 'python',
+        codeSnippet: `# 1. Truncation Hazard: int() drops decimals without rounding
+raw_score = 9.99
+truncated = int(raw_score)
+print(f"int({raw_score}) -> {truncated}") # 9, not 10!
+
+# 2. String Parsing & ValueError Handling
+raw_token = "invalid_42"
+try:
+    numeric_id = int(raw_token)
+except ValueError as err:
+    numeric_id = 0 # Safe fallback
+    print(f"Conversion failed safely: {err}")
+
+# 3. Truthiness conversion
+print(bool([]))     # False (empty list)
+print(bool([0]))    # True  (non-empty list containing 0)`,
+        explanationPoints: [
+          'int() truncates towards zero; float() converts integers to IEEE 754 floating point.',
+          'Attempting int("abc") raises ValueError, not TypeError, because the type is valid (string) but value contents cannot be parsed.',
+          'Empty collections ([], {}, set(), "") evaluate to False in boolean context.',
+        ],
+        outputSimulation: 'int(9.99) -> 9\nConversion failed safely: invalid literal for int() with base 10: \'invalid_42\'\nbool([]): False | bool([0]): True',
       },
     ],
     challenges: [
@@ -189,6 +259,9 @@ print(list_a) # [1, 2, 3, 4] — mutated through list_c reference!`,
     partTitle: 'Part 1: Python & Foundations',
     moduleNumbers: [1, 2],
     moduleTitles: ['Control Flow & Intro to AI', 'Strings, Functions & Scope'],
+    syllabusItemCount: 36,
+    syllabusItemRange: 'Items 39–74 (Lessons 9.1 to 17.1 · Incl. AI Foundations)',
+    syllabusItems: getSyllabusItemsForWeek(2),
     pillarId: 'python-backend',
     pillarTitle: 'Python Foundations',
     title: 'Control Flow, Functional Abstractions & Foundations of AI',
@@ -201,6 +274,15 @@ print(list_a) # [1, 2, 3, 4] — mutated through list_c reference!`,
       'Higher-Order Functions & Lambdas (Lessons 15.1 & 16.1)',
       'Deterministic Rules vs Machine Learning (Lesson 10.5.1)',
     ],
+    assessmentGateway: {
+      id: 'gate-w2',
+      title: 'Week 2 Screening Gateway: Control Flow, Functional Abstractions & AI Shift',
+      subtitle: 'Mandatory technical assessment gate for guard clauses, functional scopes, closures, and the shift from rules to ML.',
+      passingScorePercent: 70,
+      screeningObjective: 'Evaluate clean coding principles, function lifecycle, and fundamental understanding of the ML formulation.',
+      mandatoryToUnlockNextWeek: true,
+      questionCount: 4,
+    },
     lessons: [
       {
         id: 'w2-l1',
@@ -263,6 +345,67 @@ normalized = apply_data_pipeline([10, 20, 30], lambda x: x / 100)
           'Machine Learning models parameterize weights by learning patterns directly from labeled training data.',
         ],
         outputSimulation: 'Data pipeline normalized: [0.1, 0.2, 0.3] | Paradigm: Learning parameters from data',
+      },
+      {
+        id: 'w2-l3',
+        weekNumber: 2,
+        title: 'Iteration Mechanics: range() Generator Memory vs While Loop State Control',
+        summary: 'Understanding definite iteration over lazy range objects versus manual condition management in while loops.',
+        readTimeMinutes: 4,
+        internshipTip: 'In Python 3, range(1_000_000) does not generate a million items in memory; it is an immutable sequence type consuming constant O(1) space.',
+        language: 'python',
+        codeSnippet: `import sys
+
+# range() in Python 3 produces values lazily
+large_range = range(1_000_000_000)
+print(f"Memory size of 1-billion range: {sys.getsizeof(large_range)} bytes") # Constant 48 bytes!
+
+# Manual while loop state control with break/continue
+attempts = 0
+max_retries = 3
+while attempts < max_retries:
+    attempts += 1
+    if attempts == 2:
+        continue # Skip rest of iteration
+    print(f"Processed retry attempt #{attempts}")`,
+        explanationPoints: [
+          'range(start, stop, step) is an iterable sequence object with O(1) memory footprint.',
+          'while loops require explicit invariant mutation to prevent catastrophic infinite loops.',
+          'break terminates loop execution immediately; continue jumps to the next iteration step.',
+        ],
+        outputSimulation: 'Memory size of 1-billion range: 48 bytes\nProcessed retry attempt #1\nProcessed retry attempt #3',
+      },
+      {
+        id: 'w2-l4',
+        weekNumber: 2,
+        title: 'Function Parameter Traps & The Mutable Default Argument Bug',
+        summary: 'Why default arguments are evaluated only once at definition time, and why passing [] as default argument is an infamous production disaster.',
+        readTimeMinutes: 5,
+        internshipTip: 'A top-10 Python interview question: "What happens if a function has def add_item(val, items=[])?" The default list is shared across all future function invocations! Always use items=None.',
+        language: 'python',
+        codeSnippet: `# ❌ THE DANGEROUS MUTABLE DEFAULT BUG
+def append_candidate_bad(name: str, cache: list = []):
+    cache.append(name)
+    return cache
+
+print(append_candidate_bad("Alice")) # ['Alice']
+print(append_candidate_bad("Bob"))   # ['Alice', 'Bob'] — Unintended data leak!
+
+# ✅ PRODUCTION PATTERN: Sentinel None Default
+def append_candidate_clean(name: str, cache: list | None = None):
+    if cache is None:
+        cache = [] # Fresh list instantiated per invocation
+    cache.append(name)
+    return cache
+
+print(append_candidate_clean("Charlie")) # ['Charlie']
+print(append_candidate_clean("Dana"))    # ['Dana'] — Isolated!`,
+        explanationPoints: [
+          'Default parameter expressions are evaluated once when the function definition is executed (at compile/import time).',
+          'Mutable objects (lists, dictionaries, sets) used as defaults persist across calls as shared state.',
+          'Always use `None` as the default argument and initialize mutable containers inside the function body.',
+        ],
+        outputSimulation: 'Bad function: [\'Alice\', \'Bob\'] (Shared leak!)\nClean function: [\'Charlie\'] then [\'Dana\'] (Correctly isolated)',
       },
     ],
     challenges: [
@@ -363,6 +506,9 @@ normalized = apply_data_pipeline([10, 20, 30], lambda x: x / 100)
     partTitle: 'Part 1: Python & Foundations',
     moduleNumbers: [3, 4],
     moduleTitles: ['Built-in Data Structures', 'Object-Oriented Programming'],
+    syllabusItemCount: 11,
+    syllabusItemRange: 'Items 75–85 (Lessons 18.1 to 28.1)',
+    syllabusItems: getSyllabusItemsForWeek(3),
     pillarId: 'python-backend',
     pillarTitle: 'Python Backend',
     title: 'Data Structures, Hash Maps, OOP & Dunder Methods',
@@ -375,6 +521,15 @@ normalized = apply_data_pipeline([10, 20, 30], lambda x: x / 100)
       'Classes, __init__ & self (Lessons 24.1 & 26)',
       'Dunder Methods: __repr__, __eq__, __len__ (Lesson 28.1)',
     ],
+    assessmentGateway: {
+      id: 'gate-w3',
+      title: 'Week 3 Screening Gateway: Hash Tables, Comprehensions & OOP Architecture',
+      subtitle: 'Mandatory technical assessment gate for O(1) hash maps, dunder magic methods, encapsulation, and Two Sum.',
+      passingScorePercent: 70,
+      screeningObjective: 'Verify object-oriented engineering discipline and optimal time-complexity data structure selection.',
+      mandatoryToUnlockNextWeek: true,
+      questionCount: 4,
+    },
     lessons: [
       {
         id: 'w3-l1',
@@ -434,6 +589,74 @@ print(dev.is_hireable()) # True`,
           'Dunder methods like `__repr__` make logs and stack traces clean during production outages.',
         ],
         outputSimulation: 'is_hireable: True | repr: InternCandidate(name=\'Alex\', xp=1200, skills=3)',
+      },
+      {
+        id: 'w3-l3',
+        weekNumber: 3,
+        title: 'Container Architecture: List Mutability vs Tuple Immutability & Set Hashability',
+        summary: 'Comparing memory models of dynamic arrays, fixed tuples, and hash set structures for O(1) membership checking.',
+        readTimeMinutes: 4,
+        internshipTip: 'Screening question: "Why can a tuple be used as a dictionary key or set element, but a list cannot?" Tuples are immutable and hashable; lists are mutable and unhashable.',
+        language: 'python',
+        codeSnippet: `# 1. Tuple Hashability (Safe dictionary keys)
+coordinates_map = {
+    (40.7128, -74.0060): "New York",
+    (37.7749, -122.4194): "San Francisco"
+}
+# list_key = [1, 2]; dict_test = {list_key: "fail"} -> TypeError: unhashable type: 'list'
+
+# 2. Set O(1) deduplication & instant lookup
+raw_tags = ["python", "ai", "react", "python", "fastapi", "ai"]
+unique_tags = set(raw_tags)
+print("Unique Tags:", unique_tags)
+
+# 3. List slicing creates a shallow clone copy
+nums = [10, 20, 30, 40]
+nums_slice = nums[1:3] # [20, 30] - New list in memory`,
+        explanationPoints: [
+          'Tuples provide data integrity and can serve as dictionary keys because their __hash__ never changes.',
+          'Checking `item in set` takes O(1) constant time via hashing; `item in list` requires O(N) linear scanning.',
+          'Slicing a list nums[:] copies pointers to a fresh array container.',
+        ],
+        outputSimulation: 'Coordinates lookup: New York | Unique Tags: {\'python\', \'ai\', \'react\', \'fastapi\'}',
+      },
+      {
+        id: 'w3-l4',
+        weekNumber: 3,
+        title: 'Inheritance, super() & Method Resolution Order (MRO)',
+        summary: 'Extending base classes cleanly with super().__init__, avoiding duplicate logic, and understanding C3 linearization.',
+        readTimeMinutes: 5,
+        internshipTip: 'In production systems, avoid manual Base.__init__(self) calls. Always invoke super().__init__() to support cooperative multiple inheritance and preserve correct MRO.',
+        language: 'python',
+        codeSnippet: `class BaseService:
+    def __init__(self, service_name: str, timeout_sec: int = 30):
+        self.service_name = service_name
+        self.timeout = timeout_sec
+
+    def health_check(self) -> dict:
+        return {"service": self.service_name, "status": "UP"}
+
+class MLInferenceService(BaseService):
+    def __init__(self, service_name: str, model_version: str):
+        # Call base constructor via super()
+        super().__init__(service_name, timeout_sec=60)
+        self.model_version = model_version
+
+    def health_check(self) -> dict:
+        # Extend parent response
+        data = super().health_check()
+        data["model"] = self.model_version
+        return data
+
+svc = MLInferenceService("FraudDetection", "v2.4.1")
+print(svc.health_check())
+print("MRO:", [cls.__name__ for cls in MLInferenceService.__mro__])`,
+        explanationPoints: [
+          'super() delegates attribute resolution to parent classes along the __mro__ hierarchy.',
+          'Child methods can override parent implementations while still invoking the parent logic via super().method().',
+          'Method Resolution Order (__mro__) follows C3 linearization algorithm.',
+        ],
+        outputSimulation: 'Health: {\'service\': \'FraudDetection\', \'status\': \'UP\', \'model\': \'v2.4.1\'}\nMRO: [\'MLInferenceService\', \'BaseService\', \'object\']',
       },
     ],
     challenges: [
@@ -544,6 +767,9 @@ print(dev.is_hireable()) # True`,
     partTitle: 'Part 1: Python & Foundations',
     moduleNumbers: [5, 6, 7],
     moduleTitles: ['Advanced DSA', 'Advanced Python Features', 'Modules, Testing & Concurrency'],
+    syllabusItemCount: 18,
+    syllabusItemRange: 'Items 86–103 (Lessons 29.1 to 46.1 · Month 1 Milestone)',
+    syllabusItems: getSyllabusItemsForWeek(4),
     pillarId: 'python-backend',
     pillarTitle: 'Python Backend',
     title: 'Advanced DSA, Generators, Decorators & Concurrency',
@@ -556,6 +782,15 @@ print(dev.is_hireable()) # True`,
       'Decorators & Function Wrappers (Lesson 36.1)',
       'Threading, The GIL & AsyncIO (Lessons 45.1 & 46.1)',
     ],
+    assessmentGateway: {
+      id: 'gate-w4',
+      title: 'Week 4 Month-1 Capstone Gateway: Advanced Python Systems & Concurrency',
+      subtitle: 'Mandatory milestone assessment gate for CPython GIL, lazy generators, queue optimization, and decorators.',
+      passingScorePercent: 70,
+      screeningObjective: 'Benchmark complete mastery of the 103 Python & Systems Foundations items before transitioning to Frontend & React.',
+      mandatoryToUnlockNextWeek: true,
+      questionCount: 4,
+    },
     lessons: [
       {
         id: 'w4-l1',
@@ -613,6 +848,74 @@ simulate_heavy_compute(100_000)`,
           '*args and **kwargs allow the wrapper to accept arbitrary positional and keyword arguments.',
         ],
         outputSimulation: '[simulate_heavy_compute] executed in 0.008412s | Output returned.',
+      },
+      {
+        id: 'w4-l3',
+        weekNumber: 4,
+        title: 'Queue Architecture: Why list.pop(0) is O(N) and collections.deque is O(1)',
+        summary: 'Under-the-hood memory mechanics of dynamic arrays versus doubly-linked block lists in Python.',
+        readTimeMinutes: 5,
+        internshipTip: 'A classic LeetCode screening error: Using Python list as a FIFO queue with `list.pop(0)` turns an O(N) BFS algorithm into O(N^2)! Always import `from collections import deque`.',
+        language: 'python',
+        codeSnippet: `from collections import deque
+import time
+
+# ❌ BAD: list.pop(0) forces memory shift of all remaining items (O(N))
+# my_list.pop(0)  # Shifting 1,000,000 pointers in memory!
+
+# ✅ OPTIMAL: collections.deque provides true O(1) appends & pops from both ends
+queue = deque()
+queue.append("task_1")      # O(1) Push Right
+queue.append("task_2")
+task = queue.popleft()       # O(1) Pop Left (No memory shifting!)
+print(f"Processed task: {task}, Remaining: {list(queue)}")
+
+# Also supports fast fixed-size ring buffers
+recent_metrics = deque(maxlen=3)
+for i in range(5):
+    recent_metrics.append(i)
+print("Bounded buffer (latest 3):", list(recent_metrics)) # [2, 3, 4]`,
+        explanationPoints: [
+          'Python lists are contiguous memory arrays; removing index 0 forces C-level memmove of all subsequent elements.',
+          'collections.deque is a doubly-linked list of fixed-size memory blocks, granting O(1) operations at both heads.',
+          'deque(maxlen=K) provides zero-overhead rolling window analytics for streaming ML metrics.',
+        ],
+        outputSimulation: 'Processed task: task_1, Remaining: [\'task_2\']\nBounded buffer (latest 3): [2, 3, 4]',
+      },
+      {
+        id: 'w4-l4',
+        weekNumber: 4,
+        title: 'Concurrency Architecture: CPython GIL, CPU-Bound vs I/O-Bound Systems',
+        summary: 'When to use threading, when to use multiprocessing, and how AsyncIO cooperative multitasking bypasses mutex contention.',
+        readTimeMinutes: 5,
+        internshipTip: 'Screening question: "If you have 8 CPU cores, will Python threading speed up matrix multiplication 8x?" No! The Global Interpreter Lock (GIL) limits execution to 1 thread at a time. You must use multiprocessing or C extensions (NumPy).',
+        language: 'python',
+        codeSnippet: `import asyncio
+import time
+
+# I/O-bound concurrency via AsyncIO (Single-threaded cooperative multitasking)
+async def fetch_ml_metadata(node_id: int):
+    await asyncio.sleep(0.05) # Simulating network I/O
+    return f"Node #{node_id}: Healthy"
+
+async def main():
+    start = time.perf_counter()
+    # Concurrently execute 3 network requests without blocking thread
+    results = await asyncio.gather(
+        fetch_ml_metadata(1),
+        fetch_ml_metadata(2),
+        fetch_ml_metadata(3)
+    )
+    duration = time.perf_counter() - start
+    print(f"Fetched 3 nodes concurrently in {duration:.4f}s: {results}")
+
+asyncio.run(main())`,
+        explanationPoints: [
+          'The GIL mutex prevents race conditions in CPython memory reference counting.',
+          'CPU-bound tasks (model training, image processing) require the `multiprocessing` module across distinct OS processes.',
+          'I/O-bound tasks (API requests, database reads) thrive on `asyncio` single-threaded event loops.',
+        ],
+        outputSimulation: 'Fetched 3 nodes concurrently in 0.0512s: [\'Node #1: Healthy\', \'Node #2: Healthy\', \'Node #3: Healthy\']',
       },
     ],
     challenges: [
@@ -739,6 +1042,9 @@ simulate_heavy_compute(100_000)`,
     partTitle: 'Part 2: Frontend & React',
     moduleNumbers: [8, 9],
     moduleTitles: ['Web Foundations & Styling Architecture', 'Core JavaScript & The DOM Engine'],
+    syllabusItemCount: 25,
+    syllabusItemRange: 'Items 104–128 (AI Intervals 1.1–2.1 + Lessons 47.1 to 69.1)',
+    syllabusItems: getSyllabusItemsForWeek(5),
     pillarId: 'web-foundations',
     pillarTitle: 'Web Foundations & DOM',
     title: 'Semantic HTML5, CSS Grid/Flexbox & The DOM Engine',
@@ -751,6 +1057,15 @@ simulate_heavy_compute(100_000)`,
       'Execution Context & Closures (Lessons 55.1 & 58.1)',
       'Event Bubbling & Delegation (Lessons 68.1 & 69.1)',
     ],
+    assessmentGateway: {
+      id: 'gate-w5',
+      title: 'Week 5 Screening Gateway: Semantic Web & DOM Event Delegation',
+      subtitle: 'Mandatory technical assessment gate for CSS border-box, DOM event phases, accessibility trees, and delegation.',
+      passingScorePercent: 70,
+      screeningObjective: 'Assess candidate ability to build high-performance web interfaces without memory leaks or layout bugs.',
+      mandatoryToUnlockNextWeek: true,
+      questionCount: 4,
+    },
     lessons: [
       {
         id: 'w5-l1',
@@ -809,6 +1124,71 @@ console.log(limiter('GET /api/ping')); // allowed: false`,
         ],
         outputSimulation: 'Call 1: {allowed: true, callNumber: 1} | Call 2: {allowed: true, callNumber: 2} | Call 3: {allowed: false}',
       },
+      {
+        id: 'w5-l3',
+        weekNumber: 5,
+        title: 'Semantic HTML5 Architecture, Landmark Roles & The CSS Box Model',
+        summary: 'Constructing accessible DOM trees with <main>, <header>, <nav>, <article>, and understanding why box-sizing: border-box prevents layout bugs.',
+        readTimeMinutes: 4,
+        internshipTip: 'A common accessibility screening question: "Can a webpage have multiple <main> elements?" WCAG 2.1 specs prohibit multiple visible <main> tags; a document has exactly one primary main landmark.',
+        language: 'html',
+        codeSnippet: `<!-- ✅ Accessible, Semantic Document Structure -->
+<header class="p-4 border-b">
+  <nav aria-label="Main Navigation">
+    <a href="#dashboard" class="font-bold">DevSprint 60</a>
+  </nav>
+</header>
+
+<main class="max-w-4xl mx-auto p-6" id="primary-content">
+  <article class="prose">
+    <h1 class="text-2xl font-bold">Semantic Document Layout</h1>
+    <p>Using semantic elements generates clean Accessibility Trees for screen readers.</p>
+  </article>
+</main>
+
+<footer class="p-4 text-xs text-gray-500">
+  <p>&copy; 2026 DevSprint 60. All rights reserved.</p>
+</footer>`,
+        explanationPoints: [
+          'Semantic tags (<main>, <header>, <nav>, <section>) inform assistive technologies without arbitrary ARIA overrides.',
+          'Under content-box, width = content only (padding and border expand container); with border-box, width includes padding & borders.',
+          'Always set `* { box-sizing: border-box; }` at root to ensure predictable grid computations.',
+        ],
+        outputSimulation: '<header> -> <nav> -> <main id="primary-content"> -> <article> -> <footer> (WCAG Compliant Landmark Tree)',
+      },
+      {
+        id: 'w5-l4',
+        weekNumber: 5,
+        title: 'Modern CSS Layout Engines: Flexbox 1D Flow vs CSS Grid 2D Blueprints',
+        summary: 'When to choose Flexbox for linear distributions versus CSS Grid for simultaneous row-and-column alignment.',
+        readTimeMinutes: 5,
+        internshipTip: 'Screening rule of thumb: Use Flexbox when content dictates item sizing along a single axis (row or column); use CSS Grid when the layout structure dictates item placement in 2 dimensions.',
+        language: 'html',
+        codeSnippet: `<!-- CSS Grid: 2D Multi-Column Card Matrix -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+  <!-- Card 1 -->
+  <div class="p-4 rounded-lg border bg-slate-900 flex flex-col justify-between">
+    <h3 class="font-bold text-white">Module 8: HTML & CSS</h3>
+    <span class="text-xs text-cyan-400 mt-2">Flexbox 1D & Grid 2D</span>
+  </div>
+  <!-- Card 2 -->
+  <div class="p-4 rounded-lg border bg-slate-900 flex flex-col justify-between">
+    <h3 class="font-bold text-white">Module 9: DOM Engine</h3>
+    <span class="text-xs text-emerald-400 mt-2">Bubbling & Delegation</span>
+  </div>
+  <!-- Card 3 -->
+  <div class="p-4 rounded-lg border bg-slate-900 flex flex-col justify-between">
+    <h3 class="font-bold text-white">Module 10: Event Loop</h3>
+    <span class="text-xs text-purple-400 mt-2">Microtasks & Macrotasks</span>
+  </div>
+</div>`,
+        explanationPoints: [
+          'Flexbox handles 1-dimensional content distribution (either along main axis or cross axis).',
+          'CSS Grid defines explicit 2-dimensional track lines (grid-template-columns, grid-template-rows).',
+          'Combine CSS Grid for outer layout scaffolding with Flexbox for internal component alignment.',
+        ],
+        outputSimulation: 'Grid rendered with 3 equal tracks across desktop viewports, folding to single column on mobile screens.',
+      },
     ],
     challenges: [
       {
@@ -831,6 +1211,34 @@ console.log(limiter('GET /api/ping')); // allowed: false`,
             inputDesc: '{ tagName: "BUTTON", dataset: { action: "delete" } }',
             expectedDesc: '"delete"',
             testFnString: `(fn) => fn({ tagName: 'BUTTON', dataset: { action: 'delete' } }) === 'delete'`,
+          },
+        ],
+      },
+      {
+        id: 'w5-c2',
+        weekNumber: 5,
+        pillarId: 'web-foundations',
+        title: 'CSS Box Model Outer Dimension Calculator',
+        difficulty: 'Medium',
+        instructions: 'Write `calculateOuterWidth(contentWidth, padding, border, boxSizing)` that computes total rendered pixel width. Under "border-box", width equals `contentWidth`. Under "content-box", total width equals `contentWidth + (2 * padding) + (2 * border)`.',
+        starterCode: `function calculateOuterWidth(contentWidth, padding, border, boxSizing) {
+  if (boxSizing === 'border-box') {
+    return contentWidth;
+  }
+  return contentWidth + (padding * 2) + (border * 2);
+}`,
+        language: 'javascript',
+        solutionHint: 'Return contentWidth for border-box; sum padding and border on both left and right for content-box.',
+        testCases: [
+          {
+            inputDesc: 'contentWidth=300, padding=20, border=2, boxSizing="content-box"',
+            expectedDesc: '344',
+            testFnString: `(fn) => fn(300, 20, 2, 'content-box') === 344`,
+          },
+          {
+            inputDesc: 'contentWidth=300, padding=20, border=2, boxSizing="border-box"',
+            expectedDesc: '300',
+            testFnString: `(fn) => fn(300, 20, 2, 'border-box') === 300`,
           },
         ],
       },
@@ -908,6 +1316,9 @@ console.log(limiter('GET /api/ping')); // allowed: false`,
     partTitle: 'Part 2: Frontend & React',
     moduleNumbers: [10],
     moduleTitles: ['Asynchronous JS & Modern Tooling'],
+    syllabusItemCount: 14,
+    syllabusItemRange: 'Items 129–142 (AI Interval 3.1 + Lessons 70.1 to 85.1)',
+    syllabusItems: getSyllabusItemsForWeek(6),
     pillarId: 'js-async',
     pillarTitle: 'Core JS & Async',
     title: 'The Event Loop, Promises, Async/Await & Modern Tooling',
@@ -920,6 +1331,15 @@ console.log(limiter('GET /api/ping')); // allowed: false`,
       'Async/Await Exception Handling & Fetch API (Lessons 77.1 & 78.1)',
       'ES6+ Destructuring, Spread/Rest & Vite (Lessons 79.1–85.1)',
     ],
+    assessmentGateway: {
+      id: 'gate-w6',
+      title: 'Week 6 Screening Gateway: JavaScript Event Loop & Asynchronous Concurrency',
+      subtitle: 'Mandatory technical assessment gate for Microtasks vs Macrotasks, Promise.all vs allSettled, and Fetch error handling.',
+      passingScorePercent: 70,
+      screeningObjective: 'Test core asynchronous execution order prediction and fault-tolerant network communication skills.',
+      mandatoryToUnlockNextWeek: true,
+      questionCount: 4,
+    },
     lessons: [
       {
         id: 'w6-l1',
@@ -994,6 +1414,66 @@ results.forEach(res => {
           'Promise.race resolves or rejects as soon as the earliest promise finishes.',
         ],
         outputSimulation: 'Promise.allSettled -> [{ status: "fulfilled", value: UserData }, { status: "rejected", reason: "404 Not Found" }]',
+      },
+      {
+        id: 'w6-l3',
+        weekNumber: 6,
+        title: 'Modern Async/Await & The `fetch()` response.ok Trap',
+        summary: 'Why fetch() does not reject on HTTP 404 or 500 errors, and writing resilient API client wrappers.',
+        readTimeMinutes: 5,
+        internshipTip: 'The #1 asynchronous JavaScript gotcha in technical interviews: window.fetch() only rejects on network failures (DNS, CORS). It resolves normally for 404/500! You must check if (!response.ok).',
+        language: 'javascript',
+        codeSnippet: `// Production Safe Fetch Client
+async function fetchCandidateProfile(candidateId) {
+  try {
+    const res = await fetch(\`/api/v1/candidates/\${candidateId}\`);
+
+    // ⚠️ Mandatory check: fetch does NOT throw on 404 or 500!
+    if (!res.ok) {
+      throw new Error(\`API Error HTTP \${res.status}: \${res.statusText}\`);
+    }
+
+    const payload = await res.json();
+    return { success: true, data: payload };
+  } catch (err) {
+    // Catches network errors AND thrown HTTP errors
+    console.error('Fetch operation failed:', err.message);
+    return { success: false, error: err.message };
+  }
+}`,
+        explanationPoints: [
+          'fetch() resolves on any valid HTTP response status code, including 400 Bad Request, 404 Not Found, and 500 Internal Error.',
+          'Always inspect `response.ok` (which checks status >= 200 and < 300) before parsing body.',
+          'async functions always return a Promise, whether explicitly created or implicitly wrapped.',
+        ],
+        outputSimulation: 'HTTP 404 -> response.ok is false -> Error thrown -> { success: false, error: "API Error HTTP 404: Not Found" }',
+      },
+      {
+        id: 'w6-l4',
+        weekNumber: 6,
+        title: 'ES6+ Data Transformation: Destructuring, Spread Clones & Nullish Coalescing (??)',
+        summary: 'Safe object manipulation without mutation bugs, shallow vs deep copying, and default values.',
+        readTimeMinutes: 4,
+        internshipTip: 'Know the difference between `||` (logical OR) and `??` (nullish coalescing). `0 || 10` evaluates to 10 (0 is falsy!); `0 ?? 10` evaluates to 0 (0 is not nullish!). Never use || for numeric zero defaults.',
+        language: 'javascript',
+        codeSnippet: `// 1. Destructuring with renaming & defaults
+const candidate = { id: 101, username: 'alex', metrics: { quizScore: 0 } };
+const { username: handle, metrics: { quizScore } = {} } = candidate;
+
+// 2. Nullish Coalescing (??) vs Logical OR (||)
+const scoreWithOr = quizScore || 50;  // 50! (0 evaluated as falsy)
+const scoreWithNullish = quizScore ?? 50; // 0! (0 is preserved, only null/undefined fall back)
+console.log('OR result:', scoreWithOr, '| Nullish result:', scoreWithNullish);
+
+// 3. Object Spread Shallow Copy
+const updated = { ...candidate, status: 'Active' };
+// Mutating updated.metrics WILL mutate candidate.metrics! (Shallow reference)`,
+        explanationPoints: [
+          'Destructuring extracts deeply nested properties in clean, declarative syntax.',
+          'Nullish Coalescing (`??`) only triggers on `null` and `undefined`, preserving `0` and `""`.',
+          'Object spread (`...`) creates a shallow copy; nested references remain shared.',
+        ],
+        outputSimulation: 'OR result: 50 | Nullish result: 0 (Preserved valid zero score!)',
       },
     ],
     challenges: [
@@ -1105,6 +1585,9 @@ results.forEach(res => {
     partTitle: 'Part 2: Frontend & React',
     moduleNumbers: [11, 12],
     moduleTitles: ['React Foundations (The Paradigm Shift)', 'Routing & State Architecture'],
+    syllabusItemCount: 29,
+    syllabusItemRange: 'Items 143–171 (AI Intervals 4.1–5.1 + Lessons 86.1 to 112.1)',
+    syllabusItems: getSyllabusItemsForWeek(7),
     pillarId: 'web-foundations',
     pillarTitle: 'React Architecture',
     title: 'React Hooks, Component Lifecycle, Custom Hooks & Routing',
@@ -1117,6 +1600,15 @@ results.forEach(res => {
       'useEffect Dependency Arrays & Cleanup (Lessons 102.1 & 103.1)',
       'Custom Hooks & Routing Architecture (Lessons 104.1 & 110.1)',
     ],
+    assessmentGateway: {
+      id: 'gate-w7',
+      title: 'Week 7 Screening Gateway: React Component Architecture & Stateful Logic',
+      subtitle: 'Mandatory technical assessment gate for functional state batching, useEffect cleanup, custom hooks, and routing.',
+      passingScorePercent: 70,
+      screeningObjective: 'Verify deep operational grasp of modern React lifecycle, rendering cycles, and race-condition prevention.',
+      mandatoryToUnlockNextWeek: true,
+      questionCount: 4,
+    },
     lessons: [
       {
         id: 'w7-l1',
@@ -1191,6 +1683,77 @@ function useFetchData(endpoint) {
           'Hooks can return either tuples [data, setData] or objects { data, loading, error }.',
         ],
         outputSimulation: 'useFetchData("/api/modules") -> { data: [...], loading: false, error: null }',
+      },
+      {
+        id: 'w7-l3',
+        weekNumber: 7,
+        title: 'useEffect Dependency Array Traps & useRef Mutable Instance References',
+        summary: 'Avoiding infinite render loops, solving stale closure traps, and managing uncontrolled focus via useRef.',
+        readTimeMinutes: 5,
+        internshipTip: 'A top React technical screen question: "How do you store a value across renders without triggering a re-render?" The answer is useRef! Mutating ref.current does NOT queue a re-render.',
+        language: 'javascript',
+        codeSnippet: `import { useState, useEffect, useRef } from 'react';
+
+function AutoFocusSearchInput() {
+  const [query, setQuery] = useState('');
+  const inputRef = useRef(null); // Direct DOM node reference
+  const renderCountRef = useRef(0); // Mutable instance variable
+
+  // Increments on each render without triggering an infinite loop
+  renderCountRef.current += 1;
+
+  useEffect(() => {
+    // Focus input on mount without race conditions
+    inputRef.current?.focus();
+  }, []); // Empty dependency array = mount only
+
+  return (
+    <div>
+      <input
+        ref={inputRef}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search syllabus..."
+      />
+      <span>Renders: {renderCountRef.current}</span>
+    </div>
+  );
+}`,
+        explanationPoints: [
+          'useRef returns a persistent mutable object `{ current: value }` whose mutations do not trigger re-renders.',
+          'Missing dependencies from useEffect dependency arrays creates stale closures reading old state snapshots.',
+          'Never update state unconditionally inside an un-memoized useEffect, which creates infinite loops.',
+        ],
+        outputSimulation: 'DOM input focused on mount | renderCount tracked across renders without re-rendering cycles.',
+      },
+      {
+        id: 'w7-l4',
+        weekNumber: 7,
+        title: 'Client-Side SPA Routing: HTML5 History API & URL Query State Synchronization',
+        summary: 'How Single Page Applications render client-side views without reloading the page, using BrowserRouter, Routes, and URL parameters.',
+        readTimeMinutes: 4,
+        internshipTip: 'Screening interview question: "In an SPA, what causes HTTP 404 on page reload if deployed on nginx/S3?" Client-side routes only exist in browser memory; the web server must be configured to redirect all paths to index.html.',
+        language: 'javascript',
+        codeSnippet: `// Single Page Application URL Route Synchronization
+function syncWeekToUrl(weekNumber) {
+  // Utilizing browser History API to change URL without reloading
+  const nextUrl = \`?week=\${weekNumber}\`;
+  window.history.pushState({ week: weekNumber }, '', nextUrl);
+  console.log(\`Synchronized browser URL route to: \${nextUrl}\`);
+}
+
+// Reading URL parameters on initialization
+function getInitialWeekFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const weekParam = params.get('week');
+  return weekParam ? parseInt(weekParam, 10) : 1;
+}`,
+        explanationPoints: [
+          'SPAs intercept anchor navigation to prevent full browser round-trips to the server.',
+          'URL search parameters (`?week=3`) allow users to bookmark and share specific application states.',
+          'Web servers hosting SPAs require fallback rewrite rules to point all unmatched paths to `index.html`.',
+        ],
+        outputSimulation: 'URL synchronized to ?week=3 without page reload | State preserved on reload.',
       },
     ],
     challenges: [
@@ -1310,6 +1873,9 @@ function useFetchData(endpoint) {
     partTitle: 'Part 3: Backend & APIs',
     moduleNumbers: [13, 14, 15],
     moduleTitles: ['Enterprise State & Performance', 'RESTful API Architecture', 'Full-Stack AI Integration & Model Serving'],
+    syllabusItemCount: 31,
+    syllabusItemRange: 'Items 172–202 (AI Interval 6.1 + Lessons 113.1 to 142.1 · Full 2-Month Capstone)',
+    syllabusItems: getSyllabusItemsForWeek(8),
     pillarId: 'ml-ai',
     pillarTitle: 'Backend & Full-Stack AI',
     title: 'Enterprise State, REST Backend APIs & Full-Stack AI Serving',
@@ -1317,14 +1883,96 @@ function useFetchData(endpoint) {
     estimatedHours: 8,
     xpReward: 400,
     topics: [
-      'useReducer & Context API (Lessons 114.1 & 116.1)',
-      'FastAPI & RESTful Status Codes (Lessons 127.1 & 129.1)',
-      'NumPy Vectorization & Pandas Wrangling (Lessons 135.1 & 136.1)',
-      'Scikit-Learn Model Training & React Inference (Lessons 137.1–141.1)',
+      'useReducer & Context API State Machines (Lessons 114.1 & 116.1)',
+      'Performance Memoization with useMemo & useCallback (Lessons 124.1 & 125.1)',
+      'FastAPI REST Endpoints & Pydantic Validation (Lessons 127.1 & 128.1)',
+      'Scikit-Learn ML Training, Leakage & Model Serving (Lessons 137.1–141.1)',
     ],
+    assessmentGateway: {
+      id: 'gate-w8',
+      title: 'Week 8 Capstone Gateway: Full-Stack AI & Machine Learning Internship Readiness',
+      subtitle: 'Mandatory final gateway testing REST architecture, Pydantic schemas, data leakage prevention, and model serving.',
+      passingScorePercent: 70,
+      screeningObjective: 'Comprehensive evaluation validating complete internship assessment readiness across the full engineering stack.',
+      mandatoryToUnlockNextWeek: true,
+      questionCount: 5,
+    },
     lessons: [
       {
         id: 'w8-l1',
+        weekNumber: 8,
+        title: 'Enterprise State Architecture: useReducer & Context API',
+        summary: 'Managing complex nested state transitions with deterministic actions, reducers, and root Context providers without prop drilling.',
+        readTimeMinutes: 5,
+        internshipTip: 'In React technical screens, interviewers ask when to prefer useReducer over useState: when next state depends on multiple sub-values, or when state transitions follow complex state-machine branches.',
+        language: 'javascript',
+        codeSnippet: `// Enterprise State Machine using useReducer + Context pattern
+const initialState = { status: 'idle', candidate: null, error: null };
+
+function assessmentReducer(state, action) {
+  switch (action.type) {
+    case 'START_ASSESSMENT':
+      return { ...state, status: 'in-progress', error: null };
+    case 'SUBMIT_SUCCESS':
+      return { ...state, status: 'cleared', candidate: action.payload };
+    case 'SUBMIT_FAILURE':
+      return { ...state, status: 'failed', error: action.error };
+    default:
+      return state;
+  }
+}
+
+// Dispatch actions cleanly
+const nextState = assessmentReducer(initialState, {
+  type: 'SUBMIT_SUCCESS',
+  payload: { name: 'Alex', score: 94 }
+});
+console.log(nextState.status); // "cleared"`,
+        explanationPoints: [
+          'useReducer separates state transition logic from UI rendering components.',
+          'Actions are plain objects with a `type` and optional `payload` describing what occurred.',
+          'Combining useReducer with React Context creates an enterprise global store without external libraries.',
+        ],
+        outputSimulation: 'Assessment transition: idle -> in-progress -> cleared (score: 94)',
+      },
+      {
+        id: 'w8-l2',
+        weekNumber: 8,
+        title: 'React Performance & Memoization: React.memo, useMemo & useCallback',
+        summary: 'Eliminating unnecessary component re-renders, caching expensive computations, and preserving referential equality for callback handlers.',
+        readTimeMinutes: 5,
+        internshipTip: 'Screeners test whether candidates know premature optimization vs real memoization: React.memo shallow-compares props; if you pass an inline arrow function, referential identity breaks every render unless wrapped in useCallback.',
+        language: 'javascript',
+        codeSnippet: `import React, { useState, useMemo, useCallback } from 'react';
+
+// 1. React.memo prevents re-renders when candidate props are identical
+const CandidateRow = React.memo(function CandidateRow({ candidate, onSelect }) {
+  console.log(\`Rendered row for: \${candidate.name}\`);
+  return (
+    <div onClick={() => onSelect(candidate.id)}>
+      {candidate.name} — Score: {candidate.score}%
+    </div>
+  );
+});
+
+// 2. useMemo caches heavy filtering computation
+const qualified = useMemo(() => {
+  return candidates.filter(c => c.score >= 70);
+}, [candidates]);
+
+// 3. useCallback preserves handler reference identity
+const handleSelect = useCallback((id) => {
+  console.log('Selected candidate:', id);
+}, []);`,
+        explanationPoints: [
+          'React.memo wraps functional components to shallowly compare old and new props.',
+          'useMemo recalculates cached values only when dependencies in the array change.',
+          'useCallback preserves function reference identity between renders, preventing child re-renders.',
+        ],
+        outputSimulation: 'CandidateRow rendered 1x on mount | Skipped 14 wasteful renders during parent re-renders.',
+      },
+      {
+        id: 'w8-l3',
         weekNumber: 8,
         title: 'REST Backend Endpoints with FastAPI & Pydantic Validation',
         summary: 'Building high-performance async REST routes with automatic Swagger schemas, type validation, and idiomatic HTTP status codes.',
@@ -1358,7 +2006,7 @@ async def register_candidate(payload: CandidateSchema):
         outputSimulation: 'POST /api/v1/candidates -> 201 Created -> { status: "registered", username: "alex", score: 92.5 }',
       },
       {
-        id: 'w8-l2',
+        id: 'w8-l4',
         weekNumber: 8,
         title: 'Full-Stack AI: Model Serving & React Frontend Integration',
         summary: 'Training Scikit-Learn models, avoiding Data Leakage, serializing weights, and consuming real-time predictions from a React client.',
@@ -1416,6 +2064,38 @@ print(classification_report(y_test, y_pred))`,
             testFnString: `(fn) => {
               const res = fn(8, 2, 85, 5);
               return res.accuracy === 0.93 && res.precision === 0.8;
+            }`,
+          },
+        ],
+      },
+      {
+        id: 'w8-c2',
+        weekNumber: 8,
+        pillarId: 'ml-ai',
+        title: 'State Reducer Action Dispatcher',
+        difficulty: 'Medium',
+        instructions: 'Write `assessmentReducer(state, action)` that accepts `{ status: string, score?: number }` and an action `{ type: string, payload?: number }`. For "START", return `{ ...state, status: "active" }`. For "PASS", return `{ ...state, status: "passed", score: action.payload }`. For "FAIL", return `{ ...state, status: "failed", score: action.payload }`. Return state for default.',
+        starterCode: `function assessmentReducer(state, action) {
+  switch (action.type) {
+    case 'START':
+      return { ...state, status: 'active' };
+    case 'PASS':
+      return { ...state, status: 'passed', score: action.payload };
+    case 'FAIL':
+      return { ...state, status: 'failed', score: action.payload };
+    default:
+      return state;
+  }
+}`,
+        language: 'javascript',
+        solutionHint: 'Use a switch statement over action.type and return new state objects without mutating the input state.',
+        testCases: [
+          {
+            inputDesc: 'state={status: "idle"}, action={type: "PASS", payload: 95}',
+            expectedDesc: '{ status: "passed", score: 95 }',
+            testFnString: `(fn) => {
+              const res = fn({ status: 'idle' }, { type: 'PASS', payload: 95 });
+              return res.status === 'passed' && res.score === 95;
             }`,
           },
         ],

@@ -31,6 +31,16 @@ export interface SyllabusPart {
   modules: SyllabusModule[];
 }
 
+export interface AssessmentGateway {
+  id: string;
+  title: string;
+  subtitle: string;
+  passingScorePercent: number;
+  screeningObjective: string;
+  mandatoryToUnlockNextWeek: boolean;
+  questionCount: number;
+}
+
 export interface WeekCurriculum {
   weekNumber: number;
   monthNumber: 1 | 2;
@@ -38,6 +48,9 @@ export interface WeekCurriculum {
   partTitle: string;
   moduleNumbers: number[];
   moduleTitles: string[];
+  syllabusItemCount: number;
+  syllabusItemRange: string;
+  syllabusItems: SyllabusItem[];
   pillarId: PillarId;
   pillarTitle: string;
   title: string;
@@ -45,6 +58,7 @@ export interface WeekCurriculum {
   estimatedHours: number;
   xpReward: number;
   topics: string[];
+  assessmentGateway: AssessmentGateway;
   lessons: Lesson[];
   challenges: CodeChallenge[];
   quiz: QuizQuestion[];

@@ -309,6 +309,10 @@ export const CurriculumView: React.FC<CurriculumViewProps> = ({
                 <span aria-hidden="true">·</span>
                 <span className="text-emerald-400 font-mono">Module {currentWeekData.moduleNumbers.join(', ')}</span>
                 <span aria-hidden="true">·</span>
+                <span className="text-purple-300 font-mono font-medium bg-purple-950/60 px-2 py-0.5 rounded border border-purple-500/30">
+                  {currentWeekData.syllabusItemRange}
+                </span>
+                <span aria-hidden="true">·</span>
                 <span>Est. {currentWeekData.estimatedHours} Hours</span>
                 <span aria-hidden="true">·</span>
                 <span className="text-amber-400 font-mono tabular-nums">+{currentWeekData.xpReward} XP Reward</span>
@@ -648,14 +652,21 @@ export const CurriculumView: React.FC<CurriculumViewProps> = ({
               <Award className="w-4 h-4 text-cyan-400" />
               <span>WEEK {selectedWeek} GATE MILESTONE</span>
               <span aria-hidden="true">·</span>
-              <span>PASSING SCORE: ≥ 70%</span>
+              <span>PASSING SCORE: ≥ {currentWeekData.assessmentGateway?.passingScorePercent ?? 70}%</span>
+              <span aria-hidden="true">·</span>
+              <span className="text-purple-300">{currentWeekData.syllabusItemRange}</span>
             </div>
             <h3 className="text-xl font-bold text-white">
-              End-of-Week {selectedWeek} Technical Screening Gate Test
+              {currentWeekData.assessmentGateway?.title || `End-of-Week ${selectedWeek} Technical Screening Gate Test`}
             </h3>
             <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
-              Every single week concludes with an internship screening gate test. Passing this test with at least 70% is mandatory to unlock Week {selectedWeek + 1}. You are evaluated on real internship technical screening questions covering {currentWeekData.title}.
+              {currentWeekData.assessmentGateway?.subtitle || `Every single week concludes with an internship screening gate test. Passing this test with at least 70% is mandatory to unlock Week ${selectedWeek + 1}.`}
             </p>
+            {currentWeekData.assessmentGateway?.screeningObjective && (
+              <div className="text-[11px] font-mono text-cyan-400/90 pt-0.5">
+                Target Objective: {currentWeekData.assessmentGateway.screeningObjective}
+              </div>
+            )}
           </div>
 
           <div className="shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
