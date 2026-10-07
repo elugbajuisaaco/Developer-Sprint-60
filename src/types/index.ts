@@ -1,7 +1,43 @@
 export type PillarId = 'web-foundations' | 'js-async' | 'python-backend' | 'ml-ai';
 
+export interface SyllabusItem {
+  id: string;
+  code: string;
+  title: string;
+  type: 'lesson' | 'ai-interval';
+  weekNumber: number;
+}
+
+export interface SyllabusModule {
+  id: string;
+  moduleNumber: number;
+  title: string;
+  partId: 'part-1' | 'part-2' | 'part-3';
+  totalItems: number;
+  monthNumber: 1 | 2;
+  weeksMapped: number[];
+  items: SyllabusItem[];
+}
+
+export interface SyllabusPart {
+  id: 'part-1' | 'part-2' | 'part-3';
+  partNumber: number;
+  title: string;
+  subtitle: string;
+  monthAllocation: string;
+  totalCourses: number;
+  totalItems: number;
+  status: 'completed' | 'in-progress' | 'up-next';
+  modules: SyllabusModule[];
+}
+
 export interface WeekCurriculum {
   weekNumber: number;
+  monthNumber: 1 | 2;
+  partId: 'part-1' | 'part-2' | 'part-3';
+  partTitle: string;
+  moduleNumbers: number[];
+  moduleTitles: string[];
   pillarId: PillarId;
   pillarTitle: string;
   title: string;
@@ -79,6 +115,7 @@ export interface UserProgress {
   streakDays: number;
   lastActiveDate: string;
   completedLessonIds: string[];
+  completedSyllabusItemIds?: string[];
   completedChallengeIds: string[];
   completedQuizIds: string[];
   unlockedBadgeIds: string[];
@@ -94,4 +131,4 @@ export interface UserProgress {
   }[];
 }
 
-export type ActiveTab = 'dashboard' | 'curriculum' | 'playground' | 'mock-exam' | 'badges';
+export type ActiveTab = 'dashboard' | 'syllabus' | 'curriculum' | 'playground' | 'mock-exam' | 'badges';

@@ -17,12 +17,14 @@ interface QuizEngineProps {
   weekNumber: number;
   onClose: () => void;
   onRecordScore: (quizId: string, scorePercent: number, totalQuestions: number) => void;
+  onAdvanceWeek?: (nextWeek: number) => void;
 }
 
 export const QuizEngine: React.FC<QuizEngineProps> = ({
   weekNumber,
   onClose,
   onRecordScore,
+  onAdvanceWeek,
 }) => {
   const weekData = CURRICULUM_DATA.find((w) => w.weekNumber === weekNumber) || CURRICULUM_DATA[0];
   const questions: QuizQuestion[] = weekData.quiz;
@@ -102,12 +104,12 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
         <div className="flex items-center justify-between border-b border-slate-800 pb-4">
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400">
-              <span>Week {weekNumber} Screening Quiz</span>
+              <span>Week {weekNumber} Gate Assessment</span>
               <span aria-hidden="true">·</span>
-              <span>{weekData.pillarTitle}</span>
+              <span>Passing Bar: 70% to Unlock Week {weekNumber + 1}</span>
             </div>
             <h3 id="quiz-modal-title" className="text-xl font-bold text-white mt-0.5">
-              Technical Assessment Check
+              Technical Screening Gate Test
             </h3>
           </div>
 
@@ -125,19 +127,27 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
         {/* Finished State */}
         {isFinished ? (
           <div className="text-center py-6 space-y-5">
-            <div className="w-16 h-16 mx-auto rounded-full bg-cyan-950/60 border border-cyan-500/40 flex items-center justify-center">
-              <Award className="w-8 h-8 text-cyan-400" />
+            <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center border ${
+              finalPercentage >= 70 ? 'border-emerald-500/40 bg-emerald-950/60 text-emerald-400' : 'border-rose-500/40 bg-rose-950/60 text-rose-400'
+            }`}>
+              <Award className="w-8 h-8" />
             </div>
 
             <div>
-              <h4 className="text-2xl font-bold text-white">Quiz Completed!</h4>
-              <p className="text-xs text-slate-400 mt-1">
-                Your performance has been recorded to your developer progress.
+              <h4 className="text-2xl font-bold text-white">
+                {finalPercentage >= 70 ? `Gate Cleared! Week ${weekNumber + 1} Unlocked` : 'Under 70% Passing Threshold'}
+              </h4>
+              <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto leading-relaxed">
+                {finalPercentage >= 70
+                  ? `Congratulations! You scored ${finalPercentage}%, clearing the internship screening gate required to advance.`
+                  : `You scored ${finalPercentage}%. You need at least 70% to unlock Week ${weekNumber + 1}. Review the explanations and retake to advance.`}
               </p>
             </div>
 
             <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-5 max-w-sm mx-auto space-y-2">
-              <div className="text-4xl font-extrabold font-mono text-cyan-400 tabular-nums">
+              <div className={`text-4xl font-extrabold font-mono tabular-nums ${
+                finalPercentage >= 70 ? 'text-emerald-400' : 'text-rose-400'
+              }`}>
                 {finalPercentage}%
               </div>
               <div className="text-xs text-slate-400">
@@ -148,19 +158,33 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
               </div>
             </div>
 
-            <div className="flex justify-center gap-3 pt-2">
+            <div className="flex flex-wrap justify-center gap-3 pt-2">
               <button
                 onClick={handleRetake}
                 className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white rounded-lg border border-slate-800 bg-slate-800/60 transition-colors"
               >
                 <RotateCcw className="w-4 h-4" />
-                Retake Quiz
+                Retake Gate Test
               </button>
+
+              {finalPercentage >= 70 && weekNumber < 8 && onAdvanceWeek && (
+                <button
+                  onClick={() => {
+                    onAdvanceWeek(weekNumber + 1);
+                    onClose();
+                  }}
+                  className="flex items-center gap-2 px-5 py-2 text-xs font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg transition-colors shadow-md"
+                >
+                  <span>Advance to Week {weekNumber + 1}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
+
               <button
                 onClick={onClose}
                 className="flex items-center gap-2 px-5 py-2 text-xs font-bold text-slate-950 bg-cyan-400 hover:bg-cyan-300 rounded-lg transition-colors shadow-md"
               >
-                <span>Back to Lessons</span>
+                <span>Return to Lessons</span>
               </button>
             </div>
           </div>

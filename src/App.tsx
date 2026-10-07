@@ -14,6 +14,7 @@ import { CurriculumView } from './components/CurriculumView';
 import { CodePlaygroundView } from './components/CodePlaygroundView';
 import { MockAssessmentView } from './components/MockAssessmentView';
 import { BadgesView } from './components/BadgesView';
+import { SyllabusMasterView } from './components/SyllabusMasterView';
 import { QuizEngine } from './components/QuizEngine';
 import { soundFx } from './services/soundEffects';
 
@@ -25,10 +26,14 @@ export default function App() {
   const {
     progress,
     levelInfo,
+    auditMode,
+    toggleAuditMode,
+    isWeekUnlocked,
     completeLesson,
     completeChallenge,
     recordQuizResult,
     recordMockAssessment,
+    toggleSyllabusItem,
     resetProgress,
     loadDemoProfile,
     recentUnlockedBadge,
@@ -49,6 +54,8 @@ export default function App() {
         levelInfo={levelInfo}
         onReset={resetProgress}
         onLoadDemo={loadDemoProfile}
+        auditMode={auditMode}
+        onToggleAuditMode={toggleAuditMode}
       />
 
       {/* Main Content Area */}
@@ -58,10 +65,26 @@ export default function App() {
             progress={progress}
             levelInfo={levelInfo}
             setActiveTab={setActiveTab}
+            isWeekUnlocked={isWeekUnlocked}
+            auditMode={auditMode}
+            onToggleAuditMode={toggleAuditMode}
+            onOpenQuiz={(weekNum) => setActiveQuizWeek(weekNum)}
             onSelectWeek={(weekNum) => {
               setSelectedWeek(weekNum);
               setActiveTab('curriculum');
             }}
+          />
+        )}
+
+        {activeTab === 'syllabus' && (
+          <SyllabusMasterView
+            progress={progress}
+            setActiveTab={setActiveTab}
+            onSelectWeek={(weekNum) => {
+              setSelectedWeek(weekNum);
+              setActiveTab('curriculum');
+            }}
+            onToggleSyllabusItem={toggleSyllabusItem}
           />
         )}
 
@@ -71,7 +94,11 @@ export default function App() {
             selectedWeek={selectedWeek}
             setSelectedWeek={setSelectedWeek}
             onCompleteLesson={completeLesson}
+            onToggleSyllabusItem={toggleSyllabusItem}
             onOpenQuiz={(weekNum) => setActiveQuizWeek(weekNum)}
+            isWeekUnlocked={isWeekUnlocked}
+            auditMode={auditMode}
+            onToggleAuditMode={toggleAuditMode}
           />
         )}
 
@@ -107,6 +134,10 @@ export default function App() {
           weekNumber={activeQuizWeek}
           onClose={() => setActiveQuizWeek(null)}
           onRecordScore={recordQuizResult}
+          onAdvanceWeek={(nextWeek) => {
+            setSelectedWeek(nextWeek);
+            setActiveTab('curriculum');
+          }}
         />
       )}
 

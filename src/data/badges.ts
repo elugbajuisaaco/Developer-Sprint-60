@@ -71,35 +71,36 @@ export function checkNewBadges(progress: UserProgress): string[] {
   const newBadges: string[] = [];
 
   // Check 1: First commit
-  if (progress.completedLessonIds.length >= 1 && !currentUnlocked.has('badge-first-step')) {
+  const totalCompletedItems = progress.completedLessonIds.length + (progress.completedSyllabusItemIds?.length || 0);
+  if (totalCompletedItems >= 1 && !currentUnlocked.has('badge-first-step')) {
     newBadges.push('badge-first-step');
   }
 
-  // Check 2: DOM Dominator (Weeks 1 & 2 completed)
+  // Check 2: Pythonic Architect (Weeks 1, 2, 3, or 4 completed)
   const hasW1 = progress.completedLessonIds.some(id => id.startsWith('w1-'));
   const hasW2 = progress.completedLessonIds.some(id => id.startsWith('w2-'));
-  if (hasW1 && hasW2 && !currentUnlocked.has('badge-dom-dominator')) {
-    newBadges.push('badge-dom-dominator');
-  }
-
-  // Check 3: Async Maestro (Weeks 3 & 4 completed)
   const hasW3 = progress.completedLessonIds.some(id => id.startsWith('w3-'));
   const hasW4 = progress.completedLessonIds.some(id => id.startsWith('w4-'));
-  if (hasW3 && hasW4 && !currentUnlocked.has('badge-async-ace')) {
-    newBadges.push('badge-async-ace');
-  }
-
-  // Check 4: Pythonic Architect (Weeks 5 & 6)
-  const hasW5 = progress.completedLessonIds.some(id => id.startsWith('w5-'));
-  const hasW6 = progress.completedLessonIds.some(id => id.startsWith('w6-'));
-  if (hasW5 && hasW6 && !currentUnlocked.has('badge-python-architect')) {
+  if ((hasW1 || hasW2 || hasW3 || hasW4) && !currentUnlocked.has('badge-python-architect')) {
     newBadges.push('badge-python-architect');
   }
 
-  // Check 5: AI & ML Pioneer (Weeks 7 & 8)
+  // Check 3: DOM Dominator (Week 5: Web Foundations & DOM)
+  const hasW5 = progress.completedLessonIds.some(id => id.startsWith('w5-'));
+  if (hasW5 && !currentUnlocked.has('badge-dom-dominator')) {
+    newBadges.push('badge-dom-dominator');
+  }
+
+  // Check 4: Async Maestro (Week 6: Event loop & Async)
+  const hasW6 = progress.completedLessonIds.some(id => id.startsWith('w6-'));
+  if (hasW6 && !currentUnlocked.has('badge-async-ace')) {
+    newBadges.push('badge-async-ace');
+  }
+
+  // Check 5: AI & ML Pioneer (Week 8: Full-Stack AI & Backend)
   const hasW7 = progress.completedLessonIds.some(id => id.startsWith('w7-'));
   const hasW8 = progress.completedLessonIds.some(id => id.startsWith('w8-'));
-  if (hasW7 && hasW8 && !currentUnlocked.has('badge-ml-engineer')) {
+  if ((hasW7 && hasW8) && !currentUnlocked.has('badge-ml-engineer')) {
     newBadges.push('badge-ml-engineer');
   }
 

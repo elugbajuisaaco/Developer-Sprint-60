@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Volume2, VolumeX, Flame, RotateCcw, Sparkles } from 'lucide-react';
+import { Volume2, VolumeX, Flame, RotateCcw, Sparkles, Lock, Unlock } from 'lucide-react';
 import { ActiveTab, UserProgress } from '../types';
 import { soundFx } from '../services/soundEffects';
 
@@ -10,6 +10,8 @@ interface HeaderProps {
   levelInfo: { level: number; title: string; nextLevelXp: number; currentLevelFloor: number };
   onReset: () => void;
   onLoadDemo: () => void;
+  auditMode?: boolean;
+  onToggleAuditMode?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,6 +21,8 @@ export const Header: React.FC<HeaderProps> = ({
   levelInfo,
   onReset,
   onLoadDemo,
+  auditMode = false,
+  onToggleAuditMode,
 }) => {
   const [soundEnabled, setSoundEnabled] = useState(soundFx.isEnabled());
   const [showResetModal, setShowResetModal] = useState(false);
@@ -30,6 +34,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   const navLinks: { id: ActiveTab; label: string }[] = [
     { id: 'dashboard', label: 'Roadmap' },
+    { id: 'syllabus', label: 'Syllabus (2 Mo)' },
     { id: 'curriculum', label: 'Lessons' },
     { id: 'playground', label: 'Code Lab' },
     { id: 'mock-exam', label: 'Mock Exam' },
@@ -166,6 +171,27 @@ export const Header: React.FC<HeaderProps> = ({
             </p>
 
             <div className="space-y-2 pt-2">
+              {onToggleAuditMode && (
+                <button
+                  onClick={() => {
+                    onToggleAuditMode();
+                  }}
+                  className={`w-full flex items-center justify-between px-4 py-2.5 text-xs font-semibold rounded-lg border transition-colors ${
+                    auditMode
+                      ? 'text-amber-300 bg-amber-950/60 border-amber-500/40 hover:bg-amber-900/40'
+                      : 'text-slate-300 bg-slate-800/80 border-slate-700 hover:bg-slate-800'
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    {auditMode ? <Unlock className="w-4 h-4 text-amber-400" /> : <Lock className="w-4 h-4 text-slate-400" />}
+                    <span>{auditMode ? 'Mentor Audit Mode (All Weeks Unlocked)' : 'Strict Gate Mode (Pass Tests to Advance)'}</span>
+                  </span>
+                  <span className="font-mono text-[11px] underline">
+                    {auditMode ? 'Switch to Strict' : 'Unlock All'}
+                  </span>
+                </button>
+              )}
+
               <button
                 onClick={() => {
                   onLoadDemo();

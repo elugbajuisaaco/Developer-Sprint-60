@@ -50,6 +50,33 @@ export function useDevSprintProgress() {
 
   const [recentUnlockedBadge, setRecentUnlockedBadge] = useState<string | null>(null);
 
+  const [auditMode, setAuditMode] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('devsprint_audit_mode') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const toggleAuditMode = useCallback(() => {
+    setAuditMode((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('devsprint_audit_mode', String(next));
+      } catch {}
+      soundFx.playClick();
+      return next;
+    });
+  }, []);
+
+  const isWeekUnlocked = useCallback((weekNum: number): boolean => {
+    if (weekNum <= 1) return true;
+    if (auditMode) return true;
+    // Week N requires passing Week N-1 gate test with >= 70%
+    const prevQuizScore = progress.quizScores[`quiz-w${weekNum - 1}`];
+    return prevQuizScore !== undefined && prevQuizScore >= 70;
+  }, [auditMode, progress.quizScores]);
+
   // Sync to LocalStorage
   const saveProgress = useCallback((newProgress: UserProgress) => {
     setProgress(newProgress);
@@ -262,15 +289,49 @@ export function useDevSprintProgress() {
     saveProgress(demo);
   }, [saveProgress]);
 
+  // Action: Toggle Syllabus Catalog Item
+  const toggleSyllabusItem = useCallback((itemId: string) => {
+    const currentCompleted = progress.completedSyllabusItemIds || [];
+    const isCompleted = currentCompleted.includes(itemId);
+
+    let updatedList: string[];
+    let newXp = progress.xp;
+
+    if (isCompleted) {
+      updatedList = currentCompleted.filter(id => id !== itemId);
+      soundFx.playClick();
+    } else {
+      updatedList = [...currentCompleted, itemId];
+      newXp += 25; // +25 XP per syllabus item
+      soundFx.playSuccess();
+    }
+
+    const { level } = calculateLevel(newXp);
+    const updated: UserProgress = {
+      ...progress,
+      xp: newXp,
+      level,
+      completedSyllabusItemIds: updatedList,
+      lastActiveDate: new Date().toISOString().split('T')[0],
+    };
+
+    saveProgress(updated);
+    processBadgeUnlocks(updated);
+  }, [progress, saveProgress, processBadgeUnlocks]);
+
   const levelInfo = calculateLevel(progress.xp);
 
   return {
     progress,
     levelInfo,
+    auditMode,
+    toggleAuditMode,
+    isWeekUnlocked,
     completeLesson,
     completeChallenge,
     recordQuizResult,
     recordMockAssessment,
+    toggleSyllabusItem,
     resetProgress,
     loadDemoProfile,
     recentUnlockedBadge,
